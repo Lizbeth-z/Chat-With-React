@@ -13,6 +13,8 @@ import Button from '@material-ui/core/Button';
 
 import TextField from '@material-ui/core/TextField';
 
+import {CTX} from './Store';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -46,7 +48,16 @@ export default function DashBoardMain() {
 
 const classes = useStyles();
 
-const [textValue, changeTextValue] = React.useState('')
+//CTX Store
+const [allChats] = React.useContext(CTX);
+const topics = Object.keys(allChats);
+
+console.log(topics)
+
+//local state
+const [activeTopic, changeActiveTopic] = React.useState(topics[0]);
+
+const [textValue, changeTextValue] = React.useState('');
 
 return (
     <div>
@@ -55,14 +66,14 @@ return (
                 Chat app
             </Typography>
             <Typography component="h5">
-                Topic placeholder
+                {activeTopic}
             </Typography>
             <div className={classes.flex}>
                 <div className={classes.topicsWindow}>
                     <List>
                         {
-                            ['topic'].map(topic => (
-                                <ListItem key={topic} button>
+                            topics.map(topic => (
+                                <ListItem onClick={e => changeActiveTopic(e.target.innerText)} key={topic} button>
                                     <ListItemText primary={topic} />
                                 </ListItem>
                             ))
@@ -71,10 +82,10 @@ return (
                 </div>
                 <div className={classes.chatWindow}>
                     {
-                        [{from: 'user', msg:'hello'}].map((chat, i) => (
+                        allChats[activeTopic].map((chat, i) => (
                             <div className={classes.flex} key={i}>
                                 <Chip label={chat.from} />
-                                <Typography variant='p'>{chat.msg}</Typography>
+                                <Typography variant='body1'>{chat.msg}</Typography>
                             </div>
                         ))
                     }
